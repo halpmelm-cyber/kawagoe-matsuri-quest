@@ -2,22 +2,25 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#7f1717">
-<title>川越まつりクエスト</title>
+<meta name="theme-color" content="#11100f">
+<meta name="description" content="今福囃子連中と六軒町・三番叟の山車を楽しく学ぶ川越まつりクエスト">
+<title>今福囃子連中 × 六軒町 祭りクエスト</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header><div><small>KAWAGOE MATSURI QUEST</small><h1>川越まつりクエスト</h1></div><button id="gear">⚙</button></header>
+<header><div><small>IMAFUKU HAYASHI RENCHU × ROKKENMACHI</small><h1>今福囃子連中 × 六軒町</h1></div><button id="gear">⚙</button></header>
 <main>
 <section id="home" class="page active">
-  <div class="hero"><div class="lantern">🏮</div><div><h2>遊んで、知って、祭りへ。</h2><p>川越まつりをゲームで体験しよう。</p></div></div>
+  <div class="hero"><div class="lantern">🥁</div><div><h2>今福の囃子で、六軒町の山車へ。</h2><p>今福囃子連中と六軒町・三番叟の歴史をゲームで体験しよう。</p></div></div>
+  <div class="identity"><span>埼玉県指定無形民俗文化財・今福囃子連中</span><b>×</b><span>六軒町「三番叟」の山車</span></div>
   <div class="stats"><div><b id="xp">0</b><small>XP</small></div><div><b id="level">1</b><small>レベル</small></div><div><b id="coins">0</b><small>祭り札</small></div></div>
   <div class="home-grid">
-    <button data-page="start">🏮<b>祭りに出る</b><small>町と山車を選択</small></button>
-    <button data-page="quiz">🎴<b>学習クイズ</b><small>知識を身につける</small></button>
-    <button data-page="encyclopedia">📚<b>山車図鑑</b><small>町・山車・囃子</small></button>
-    <button data-page="history">⏳<b>歴史</b><small>祭りの歩み</small></button>
+    <button data-page="start">🥁<b>祭りに出る</b><small>今福・六軒町コース</small></button>
+    <button data-page="quiz">🎴<b>今福×六軒町クイズ</b><small>文化と歴史を学ぶ</small></button>
+    <button data-page="encyclopedia">🏮<b>三番叟・囃子図鑑</b><small>山車・囃子・曳っかわせ</small></button>
+    <button data-page="history">📜<b>つながる歴史</b><small>1648 → 現在</small></button>
   </div>
+  <div class="source-note">ゲーム内の文化財・歴史情報は川越市公式情報をもとに構成しています。</div>
 </section>
 
 <section id="start" class="page">
@@ -29,20 +32,20 @@
  <div class="head"><button class="back" data-page="start">←</button><h2>祭りの道</h2></div>
  <div class="route-card"><div class="night">🌙</div><div class="town-name" id="selectedTown"></div><div class="float" id="float">🏮</div><div class="road">━━━　━━━　━━━</div></div>
  <div class="mission-grid">
-   <button id="learnMission">📖<b>祭りを学ぶ</b><small>クイズに挑戦</small></button>
-   <button id="rhythmMission">🥁<b>囃子に挑戦</b><small>リズムを合わせる</small></button>
-   <button id="hikkawaseMission">🔥<b>曳っかわせ</b><small>タイミング勝負</small></button>
+   <button id="learnMission">📖<b>祭りを学ぶ</b><small>今福・六軒町クイズ</small></button>
+   <button id="rhythmMission">🥁<b>今福囃子に挑戦</b><small>リズムを合わせる</small></button>
+   <button id="hikkawaseMission">🔥<b>曳っかわせ</b><small>六軒町の山車と勝負</small></button>
  </div>
- <div class="card"><b>今回の目標</b><p id="goal">祭りの知識を1つ身につけよう。</p></div>
+ <div class="card"><b>今回の目標</b><p id="goal">今福囃子と六軒町のつながりを知ろう。</p></div>
 </section>
 
 <section id="rhythm" class="page">
- <div class="head"><button class="back" data-page="route">←</button><h2>囃子リズム</h2></div>
+ <div class="head"><button class="back" data-page="route">←</button><h2>今福囃子リズム</h2></div>
  <div class="rhythm-card"><p>光るタイミングで太鼓を叩こう！</p><div id="beat">●</div><button id="drum">🥁 叩く！</button><p id="rhythmResult"></p></div>
 </section>
 
 <section id="hikkawase" class="page">
- <div class="head"><button class="back" data-page="route">←</button><h2>曳っかわせ</h2></div>
+ <div class="head"><button class="back" data-page="route">←</button><h2>六軒町・曳っかわせ</h2></div>
  <div class="battle"><div id="floatA">🏮</div><div id="vs">VS</div><div id="floatB">🏮</div></div>
  <p class="center">中央のゲージが金色のときに押そう。</p>
  <div class="meter"><div id="meter"></div></div><button id="hbtn" class="primary">曳く！</button>
@@ -50,18 +53,18 @@
 </section>
 
 <section id="quiz" class="page">
- <div class="head"><button class="back" data-page="home">←</button><h2>学習クイズ</h2></div><div id="quizBox"></div>
+ <div class="head"><button class="back" data-page="home">←</button><h2>今福×六軒町クイズ</h2></div><div id="quizBox"></div>
 </section>
 
 <section id="encyclopedia" class="page">
- <div class="head"><button class="back" data-page="home">←</button><h2>山車図鑑</h2></div><div id="encyclopediaBox"></div>
+ <div class="head"><button class="back" data-page="home">←</button><h2>三番叟・囃子図鑑</h2></div><div id="encyclopediaBox"></div>
 </section>
 
 <section id="history" class="page">
- <div class="head"><button class="back" data-page="home">←</button><h2>川越まつりの歴史</h2></div><div id="historyBox"></div>
+ <div class="head"><button class="back" data-page="home">←</button><h2>今福×六軒町の歴史</h2></div><div id="historyBox"></div>
 </section>
 </main>
 <div id="toast"></div>
-<div id="modal" class="hidden"><div class="modal"><button id="close">×</button><h2>設定</h2><p>このゲームはデータを分離しているため、後から町・山車・問題・歴史を追加できます。</p><button id="reset" class="primary">プレイデータをリセット</button></div></div>
+<div id="modal" class="hidden"><div class="modal"><button id="close">×</button><h2>設定</h2><p>今福囃子連中と六軒町を中心にした川越まつり学習ゲームです。</p><button id="reset" class="primary">プレイデータをリセット</button></div></div>
 <script src="data.js"></script><script src="app.js"></script>
 </body></html>
