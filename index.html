@@ -1,59 +1,42 @@
-<!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#11151c">
-<title>川越まつりクエスト V5</title>
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<header><div><small>IMAFUKU HAYASHI × ROKKENMACHI</small><h1>川越まつりクエスト V5</h1></div><button id="settings">⚙️</button></header>
+<!doctype html><html lang="ja"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#20140f"><title>川越まつりクエスト V6</title>
+<link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"></head>
+<body><header><div><small>IMAFUKU HAYASHI × ROKKENMACHI</small><h1>川越まつりクエスト V6</h1></div><button id="gear">⚙</button></header>
 <main>
 <section id="home" class="page active">
-  <div class="hero"><div class="hero-icon">🏮</div><div><h2>ドットの川越を冒険しよう。</h2><p>NPCと話し、山車を見つけ、クイズで祭りを学ぶ探索RPG。</p></div></div>
-  <div class="stats"><div><b id="xp">0</b><small>XP</small></div><div><b id="lv">1</b><small>LEVEL</small></div><div><b id="coins">0</b><small>祭り札</small></div></div>
-  <button class="primary big" data-page="world">▶ 街へ出発</button>
-  <div class="menu">
-    <button data-page="quests">⭐<b>クエスト</b><small>探索目標</small></button>
-    <button data-page="book">🏮<b>図鑑</b><small>発見記録</small></button>
-    <button data-page="history">📜<b>歴史</b><small>祭りの歩み</small></button>
-    <button data-page="freequiz">🎴<b>クイズ帳</b><small>復習</small></button>
-  </div>
+<div class="hero"><div class="pixelLantern">▥</div><div><h2>祭りの街を歩こう。</h2><p>探索 → 会話 → クイズ → お布施 → ガチャ</p></div></div>
+<div class="stats"><div><b id="xp">0</b><small>XP</small></div><div><b id="lv">1</b><small>LEVEL</small></div><div><b id="offering">0</b><small>お布施</small></div></div>
+<button class="primary big" onclick="show('world')">▶ 街を探索する</button>
+<div class="menu"><button onclick="show('gacha')"><i>🎁</i><b>お布施ガチャ</b><small>100 お布施 / 1回</small></button><button onclick="show('collection')"><i>📖</i><b>コレクション</b><small>ガチャ景品</small></button><button onclick="show('quests')"><i>⭐</i><b>クエスト</b><small>探索目標</small></button><button onclick="show('history')"><i>📜</i><b>祭り資料</b><small>学習メモ</small></button></div>
 </section>
 
-<section id="world" class="page">
- <div class="titlebar"><button data-page="home">←</button><h2>川越・祭りの街</h2></div>
- <div class="help">📱 十字キー　💻 WASD / 矢印キー　近づいたら「話す」「調べる」</div>
- <div class="map" id="map">
-   <div class="road h"></div><div class="road v"></div><div class="road d"></div>
-   <div class="water"></div>
-   <div class="tree a">🌳</div><div class="tree b">🌳</div><div class="tree c">🌳</div>
-   <div class="spot shrine" data-spot="shrine">⛩️<span>氷川神社</span></div>
-   <div class="spot rokken" data-spot="rokken">🏮<span>六軒町<br>三番叟</span></div>
-   <div class="spot imafuku" data-spot="imafuku">🥁<span>今福囃子</span></div>
-   <div class="spot plaza" data-spot="plaza">🎐<span>祭り広場</span></div>
-   <div class="spot shop" data-spot="shop">🏠<span>町の店</span></div>
-   <div class="npc n1" data-npc="hayashi">🧑‍🦱<span>囃子の人</span></div>
-   <div class="npc n2" data-npc="town">👨‍🦳<span>町の人</span></div>
-   <div class="npc n3" data-npc="kid">🧒<span>祭り好き</span></div>
-   <div id="player">🧑‍🎤</div>
- </div>
- <div class="near"><b id="nearName">中央通り</b><span id="nearDesc">街を歩いてみよう。</span></div>
- <div class="dpad"><button data-move="up">▲</button><div><button data-move="left">◀</button><button data-move="down">▼</button><button data-move="right">▶</button></div></div>
- <div class="actions"><button id="talk" disabled>💬 話す</button><button id="inspect" disabled>🔎 調べる</button></div>
- <div class="progress">発見 <b id="found">0 / 5</b><span>出会い <b id="met">0 / 3</b></span></div>
+<section id="world" class="page"><div class="bar"><button onclick="show('home')">←</button><h2>川越・祭りの街</h2><b>🙏 <span id="mapOffering">0</span></b></div>
+<div class="hint">📱 十字キー　💻 WASD / 矢印キー　人や建物に近づこう</div>
+<div id="map" class="map">
+<div class="grass g1"></div><div class="grass g2"></div><div class="road rh"></div><div class="road rv"></div><div class="road r2"></div><div class="river"></div><div class="bridge"></div>
+<div class="house h1"><span class="roof"></span><b>町家</b></div><div class="house h2"><span class="roof"></span><b>町家</b></div>
+<div class="spot shrine" data-spot="shrine"><i>⛩</i><b>氷川神社</b></div>
+<div class="spot rokken" data-spot="rokken"><div class="dashi"><span>▲</span><span>▣</span><span>▥</span></div><b>六軒町</b></div>
+<div class="spot imafuku" data-spot="imafuku"><div class="drum">●</div><b>今福囃子</b></div>
+<div class="spot plaza" data-spot="plaza"><i>🏮</i><b>祭り広場</b></div>
+<div class="spot museum" data-spot="museum"><i>▤</i><b>資料館</b></div>
+<div class="tree t1">♣</div><div class="tree t2">♣</div><div class="tree t3">♣</div><div class="tree t4">♣</div>
+<div class="npc n1" data-npc="hayashi"><div class="person pblue"><i></i></div><b>囃子の人</b></div>
+<div class="npc n2" data-npc="elder"><div class="person pred"><i></i></div><b>町の人</b></div>
+<div class="npc n3" data-npc="child"><div class="person pyellow"><i></i></div><b>祭り好き</b></div>
+<div id="player"><div class="person player"><i></i></div></div>
+</div>
+<div class="near"><b id="nearName">中央通り</b><span id="nearText">歩いてみよう</span></div>
+<div class="dpad"><button data-m="up">▲</button><div><button data-m="left">◀</button><button data-m="down">▼</button><button data-m="right">▶</button></div></div>
+<div class="actions"><button id="talk" disabled>💬 話す</button><button id="inspect" disabled>🔎 調べる</button></div>
 </section>
 
 <section id="dialog" class="page"><div id="dialogBox"></div></section>
-<section id="event" class="page"><div class="titlebar"><button data-page="world">←</button><h2 id="eventTitle">クイズ</h2></div><div id="eventBox"></div></section>
-<section id="quests" class="page"><div class="titlebar"><button data-page="home">←</button><h2>クエスト</h2></div><div id="questBox"></div></section>
-<section id="book" class="page"><div class="titlebar"><button data-page="home">←</button><h2>祭り図鑑</h2></div><div id="bookBox"></div></section>
-<section id="history" class="page"><div class="titlebar"><button data-page="home">←</button><h2>歴史</h2></div><div id="historyBox"></div></section>
-<section id="freequiz" class="page"><div class="titlebar"><button data-page="home">←</button><h2>クイズ帳</h2></div><div id="freeQuizBox"></div></section>
-</main>
-<div id="toast"></div>
-<div id="modal" class="hidden"><div class="modal"><button id="close">×</button><h2>設定</h2><p>セーブはこの端末のブラウザに保存されます。</p><button id="reset" class="danger">セーブデータをリセット</button></div></div>
-<script src="data.js"></script><script src="app.js"></script>
-</body></html>
+<section id="quiz" class="page"><div class="bar"><button onclick="show('world')">←</button><h2 id="quizTitle">祭りクイズ</h2></div><div id="quizBox"></div></section>
+<section id="gacha" class="page"><div class="bar"><button onclick="show('home')">←</button><h2>お布施ガチャ</h2><b>🙏 <span id="gachaMoney">0</span></b></div><div class="gachaMachine"><div class="banner">祭りコレクション</div><div id="capsule" class="capsule">?</div><p>街のクイズで「お布施」を集めよう！</p><button class="primary big" id="pull">100 お布施で1回</button><button class="secondary big" id="pull10">900 お布施で10回</button><div id="gachaResult"></div></div></section>
+<section id="collection" class="page"><div class="bar"><button onclick="show('home')">←</button><h2>コレクション</h2></div><div id="collectionBox" class="collection"></div></section>
+<section id="quests" class="page"><div class="bar"><button onclick="show('home')">←</button><h2>クエスト</h2></div><div id="questBox"></div></section>
+<section id="history" class="page"><div class="bar"><button onclick="show('home')">←</button><h2>祭り資料</h2></div><div id="historyBox"></div></section>
+</main><div id="toast"></div><div id="modal" class="hidden"><div class="modal"><button id="close">×</button><h2>V6 設定</h2><p>セーブはブラウザに保存されます。</p><button id="reset" class="danger">セーブをリセット</button></div></div>
+<script src="data.js"></script><script src="app.js"></script></body></html>
