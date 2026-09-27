@@ -1,9 +1,1 @@
-{
-  "name": "今福囃子連中 × 六軒町 祭りクエスト",
-  "short_name": "今福×六軒町クエスト",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#f3ecdf",
-  "theme_color": "#11100f",
-  "lang": "ja"
-}
+{"name": "川越まつりクエスト V5", "short_name": "川越まつり", "start_url": "./", "display": "standalone", "background_color": "#0d1117", "theme_color": "#171b22"}

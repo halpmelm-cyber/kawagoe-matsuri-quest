@@ -1,75 +1,59 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#11100f">
-<meta name="description" content="ドットの川越の街を歩いて、今福囃子連中と六軒町・三番叟を学ぶゲーム">
-<title>今福囃子連中 × 六軒町 祭りクエスト</title>
-<link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#11151c">
+<title>川越まつりクエスト V5</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header><div><small>IMAFUKU HAYASHI RENCHU × ROKKENMACHI</small><h1>川越まつりクエスト</h1></div><button id="gear">⚙</button></header>
+<header><div><small>IMAFUKU HAYASHI × ROKKENMACHI</small><h1>川越まつりクエスト V5</h1></div><button id="settings">⚙️</button></header>
 <main>
 <section id="home" class="page active">
-  <div class="hero"><div class="pixel-lantern">🏮</div><div><h2>ドットの川越を歩こう。</h2><p>街を探索して、今福囃子連中と六軒町の秘密を見つけよう。</p></div></div>
-  <div class="identity"><span>今福囃子連中・芝金杉流</span><b>×</b><span>六軒町「三番叟」</span></div>
-  <div class="stats"><div><b id="xp">0</b><small>XP</small></div><div><b id="level">1</b><small>レベル</small></div><div><b id="coins">0</b><small>祭り札</small></div></div>
-  <button class="start-explore" data-page="explore">▶ ドットの街へ出発</button>
-  <div class="home-grid">
-    <button data-page="quiz">🎴<b>クイズ帳</b><small>見つけた問題を復習</small></button>
-    <button data-page="encyclopedia">🏮<b>図鑑</b><small>山車・囃子・曳っかわせ</small></button>
-    <button data-page="history">📜<b>歴史</b><small>今福×六軒町の歩み</small></button>
-    <button data-page="explore">🗺️<b>街を探索</b><small>建物を調べてみよう</small></button>
+  <div class="hero"><div class="hero-icon">🏮</div><div><h2>ドットの川越を冒険しよう。</h2><p>NPCと話し、山車を見つけ、クイズで祭りを学ぶ探索RPG。</p></div></div>
+  <div class="stats"><div><b id="xp">0</b><small>XP</small></div><div><b id="lv">1</b><small>LEVEL</small></div><div><b id="coins">0</b><small>祭り札</small></div></div>
+  <button class="primary big" data-page="world">▶ 街へ出発</button>
+  <div class="menu">
+    <button data-page="quests">⭐<b>クエスト</b><small>探索目標</small></button>
+    <button data-page="book">🏮<b>図鑑</b><small>発見記録</small></button>
+    <button data-page="history">📜<b>歴史</b><small>祭りの歩み</small></button>
+    <button data-page="freequiz">🎴<b>クイズ帳</b><small>復習</small></button>
   </div>
-  <div class="source-note">文化財・歴史情報は川越市公式情報をもとに構成しています。</div>
 </section>
 
-<section id="explore" class="page">
- <div class="head"><button class="back" data-page="home">←</button><h2>川越・祭りの街</h2></div>
- <div class="explore-help">
-   <b>街を歩いて調べよう！</b>
-   <span>スマホ：十字キー / PC：WASD・矢印キー</span>
+<section id="world" class="page">
+ <div class="titlebar"><button data-page="home">←</button><h2>川越・祭りの街</h2></div>
+ <div class="help">📱 十字キー　💻 WASD / 矢印キー　近づいたら「話す」「調べる」</div>
+ <div class="map" id="map">
+   <div class="road h"></div><div class="road v"></div><div class="road d"></div>
+   <div class="water"></div>
+   <div class="tree a">🌳</div><div class="tree b">🌳</div><div class="tree c">🌳</div>
+   <div class="spot shrine" data-spot="shrine">⛩️<span>氷川神社</span></div>
+   <div class="spot rokken" data-spot="rokken">🏮<span>六軒町<br>三番叟</span></div>
+   <div class="spot imafuku" data-spot="imafuku">🥁<span>今福囃子</span></div>
+   <div class="spot plaza" data-spot="plaza">🎐<span>祭り広場</span></div>
+   <div class="spot shop" data-spot="shop">🏠<span>町の店</span></div>
+   <div class="npc n1" data-npc="hayashi">🧑‍🦱<span>囃子の人</span></div>
+   <div class="npc n2" data-npc="town">👨‍🦳<span>町の人</span></div>
+   <div class="npc n3" data-npc="kid">🧒<span>祭り好き</span></div>
+   <div id="player">🧑‍🎤</div>
  </div>
- <div class="map-wrap">
-   <div id="map" class="pixel-map">
-     <div class="map-title">KAWAGOE FESTIVAL</div>
-     <div class="building shrine" data-place="shrine">⛩️<small>氷川神社</small></div>
-     <div class="building rokkemachi" data-place="rokkemachi">🏮<small>六軒町<br>三番叟</small></div>
-     <div class="building imafuku" data-place="imafuku">🥁<small>今福囃子連中</small></div>
-     <div class="building matsuri" data-place="matsuri">🎐<small>祭り広場</small></div>
-     <div class="building shop" data-place="shop">🏠<small>町の店</small></div>
-     <div class="road r1"></div><div class="road r2"></div><div class="road r3"></div>
-     <div id="player" class="player">🧑‍🎤</div>
-     <div id="npc" class="npc">🧑‍🦱</div>
-   </div>
- </div>
- <div class="location-card"><b id="locationName">中央通り</b><p id="locationHint">建物に近づくと調べられます。</p></div>
- <div class="dpad">
-   <button data-move="up">▲</button>
-   <div><button data-move="left">◀</button><button data-move="down">▼</button><button data-move="right">▶</button></div>
- </div>
- <button id="inspect" class="primary inspect" disabled>🔎 調べる</button>
- <div class="discoveries"><b>発見済み</b><span id="discoverCount">0 / 5</span></div>
+ <div class="near"><b id="nearName">中央通り</b><span id="nearDesc">街を歩いてみよう。</span></div>
+ <div class="dpad"><button data-move="up">▲</button><div><button data-move="left">◀</button><button data-move="down">▼</button><button data-move="right">▶</button></div></div>
+ <div class="actions"><button id="talk" disabled>💬 話す</button><button id="inspect" disabled>🔎 調べる</button></div>
+ <div class="progress">発見 <b id="found">0 / 5</b><span>出会い <b id="met">0 / 3</b></span></div>
 </section>
 
-<section id="placeQuiz" class="page">
- <div class="head"><button class="back" data-page="explore">←</button><h2 id="placeQuizTitle">発見クイズ</h2></div>
- <div id="placeQuizBox"></div>
-</section>
-
-<section id="encyclopedia" class="page">
- <div class="head"><button class="back" data-page="home">←</button><h2>三番叟・囃子図鑑</h2></div><div id="encyclopediaBox"></div>
-</section>
-
-<section id="history" class="page">
- <div class="head"><button class="back" data-page="home">←</button><h2>今福×六軒町の歴史</h2></div><div id="historyBox"></div>
-</section>
-
-<section id="quiz" class="page">
- <div class="head"><button class="back" data-page="home">←</button><h2>クイズ帳</h2></div><div id="quizBox"></div>
-</section>
+<section id="dialog" class="page"><div id="dialogBox"></div></section>
+<section id="event" class="page"><div class="titlebar"><button data-page="world">←</button><h2 id="eventTitle">クイズ</h2></div><div id="eventBox"></div></section>
+<section id="quests" class="page"><div class="titlebar"><button data-page="home">←</button><h2>クエスト</h2></div><div id="questBox"></div></section>
+<section id="book" class="page"><div class="titlebar"><button data-page="home">←</button><h2>祭り図鑑</h2></div><div id="bookBox"></div></section>
+<section id="history" class="page"><div class="titlebar"><button data-page="home">←</button><h2>歴史</h2></div><div id="historyBox"></div></section>
+<section id="freequiz" class="page"><div class="titlebar"><button data-page="home">←</button><h2>クイズ帳</h2></div><div id="freeQuizBox"></div></section>
 </main>
 <div id="toast"></div>
-<div id="modal" class="hidden"><div class="modal"><button id="close">×</button><h2>設定</h2><p>ドットの川越を歩いて、今福囃子連中と六軒町を学ぶ探索ゲームです。</p><button id="reset" class="primary">プレイデータをリセット</button></div></div>
+<div id="modal" class="hidden"><div class="modal"><button id="close">×</button><h2>設定</h2><p>セーブはこの端末のブラウザに保存されます。</p><button id="reset" class="danger">セーブデータをリセット</button></div></div>
 <script src="data.js"></script><script src="app.js"></script>
 </body></html>

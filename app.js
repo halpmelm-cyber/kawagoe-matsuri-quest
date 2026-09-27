@@ -1,76 +1,83 @@
-let S=JSON.parse(localStorage.getItem("kmq4")||'{"xp":0,"coins":0,"discoveries":[],"q":0}');
-let pos={x:50,y:74}, currentPlace=null, locked=false;
+const KEY="kawagoeQuestV5";
+let S=JSON.parse(localStorage.getItem(KEY)||'{"xp":0,"coins":0,"found":[],"met":[],"q":0}');
+let pos={x:50,y:72}, nearSpot=null, nearNpc=null, eventData=null, answered=false;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-function save(){localStorage.setItem("kmq4",JSON.stringify(S));stats()}
-function stats(){$("#xp").textContent=S.xp;$("#coins").textContent=S.coins;$("#level").textContent=Math.floor(S.xp/100)+1;$("#discoverCount").textContent=S.discoveries.length+" / 5"}
-function toast(x){let t=$("#toast");t.textContent=x;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1600)}
-function page(id){$$(".page").forEach(x=>x.classList.remove("active"));$("#"+id).classList.add("active");window.scrollTo(0,0);if(id==="quiz")quiz();if(id==="encyclopedia")encyclopedia();if(id==="history")history();if(id==="explore"){setTimeout(()=>renderPlayer(),0)}}
-$$("[data-page]").forEach(x=>x.onclick=()=>page(x.dataset.page));
-
-const places={
- shrine:{name:"氷川神社",hint:"川越まつりの歴史を感じる場所。祭りの始まりについて問題が出る。",q:{q:"川越まつりのはじまりとされる出来事は？",a:["慶安元年の神輿・獅子頭などの寄進","明治21年の山車新造","昭和36年の廻り舞台改造","2016年のユネスコ登録"],ok:0,e:"慶安元年（1648年）、川越藩主松平信綱が神輿・獅子頭などを寄進し、祭りの執行を促したことが始まりとされています."}},
- rokkemachi:{name:"六軒町・三番叟",hint:"六軒町の山車を調べよう。三番叟と1888年のつながりが鍵。",q:{q:"六軒町の山車の人形は？",a:["三番叟","羅陵王","山王","道灌"],ok:0,e:"六軒町の山車には、能楽『式三番』に登場する三番叟の人形が載せられています。"}},
- imafuku:{name:"今福囃子連中",hint:"今福の囃子と流派を調べよう。",q:{q:"今福囃子連中が称する囃子の流派は？",a:["芝金杉流","王蔵流","堤崎流","葛西囃子"],ok:0,e:"川越市公式情報では、今福の祭りばやしは芝金杉流とされています。"}},
- matsuri:{name:"祭り広場",hint:"山車同士が出会ったときの名場面を調べよう。",q:{q:"山車同士が出会った際に囃子を演奏し合う場面は？",a:["曳っかわせ","神幸祭","御神火","渡御"],ok:0,e:"山車同士が出会った際、山車を正面に向けて囃子を演奏し合うのが曳っかわせです。"}},
- shop:{name:"町の店",hint:"祭りの知識を集めた人には、1888年の問題が待っている。",q:{q:"1888年、六軒町が山車を新造した際に選ばれたとされる囃子は？",a:["今福の祭りばやし","中台囃子","連雀町の囃子","新富町の囃子"],ok:0,e:"明治21年（1888年）、六軒町が山車を新造した際に今福の祭りばやしが選ばれ、それ以来、六軒町の山車で演奏していると川越市が紹介しています。"}}
-};
-
-function renderPlayer(){
- const p=$("#player");p.style.left=pos.x+"%";p.style.top=pos.y+"%";
- let nearest=null, best=999;
- $$(".building").forEach(el=>{
-   const r=el.getBoundingClientRect(), mr=$("#map").getBoundingClientRect();
-   const bx=((r.left+r.width/2-mr.left)/mr.width)*100, by=((r.top+r.height/2-mr.top)/mr.height)*100;
-   const d=Math.hypot(pos.x-bx,pos.y-by);
-   if(d<best){best=d;nearest=el}
- });
- if(nearest && best<14){
-   currentPlace=nearest.dataset.place;$("#inspect").disabled=false;
-   $("#locationName").textContent=places[currentPlace].name;
-   $("#locationHint").textContent=places[currentPlace].hint;
- }else{
-   currentPlace=null;$("#inspect").disabled=true;
-   $("#locationName").textContent="中央通り";$("#locationHint").textContent="建物に近づくと「調べる」が使えます。";
- }
+function save(){localStorage.setItem(KEY,JSON.stringify(S));renderStats()}
+function renderStats(){
+ $("#xp").textContent=S.xp; $("#coins").textContent=S.coins; $("#lv").textContent=Math.floor(S.xp/100)+1;
+ $("#found").textContent=S.found.length+" / 5"; $("#met").textContent=S.met.length+" / 3";
 }
-function move(dx,dy){
- pos.x=Math.max(8,Math.min(92,pos.x+dx));pos.y=Math.max(8,Math.min(92,pos.y+dy));
- renderPlayer();
+function toast(t){let e=$("#toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1500)}
+function show(id){
+ $$(".page").forEach(x=>x.classList.remove("active")); $("#"+id).classList.add("active"); window.scrollTo(0,0);
+ if(id==="world") setTimeout(updateWorld,0);
+ if(id==="quests") renderQuests();
+ if(id==="book") renderBook();
+ if(id==="history") renderHistory();
+ if(id==="freequiz") renderFreeQuiz();
 }
+$$("[data-page]").forEach(b=>b.onclick=()=>show(b.dataset.page));
+function distance(el){
+ let r=el.getBoundingClientRect(),m=$("#map").getBoundingClientRect();
+ let x=(r.left+r.width/2-m.left)/m.width*100, y=(r.top+r.height/2-m.top)/m.height*100;
+ return Math.hypot(pos.x-x,pos.y-y);
+}
+function updateWorld(){
+ $("#player").style.left=pos.x+"%"; $("#player").style.top=pos.y+"%";
+ let sd=999,nd=999; nearSpot=null; nearNpc=null;
+ $$(".spot").forEach(e=>{let d=distance(e);if(d<sd){sd=d;nearSpot=e.dataset.spot}});
+ $$(".npc").forEach(e=>{let d=distance(e);if(d<nd){nd=d;nearNpc=e.dataset.npc}});
+ $("#talk").disabled=nd>=13; $("#inspect").disabled=sd>=13;
+ if(nd<13){$("#nearName").textContent=NPCS[nearNpc].name;$("#nearDesc").textContent="近くに人がいる。話しかけてみよう。"}
+ else if(sd<13){$("#nearName").textContent=SPOTS[nearSpot].name;$("#nearDesc").textContent=SPOTS[nearSpot].desc}
+ else{$("#nearName").textContent="中央通り";$("#nearDesc").textContent="街を歩いて次の場所を探そう。"}
+}
+function move(dx,dy){pos.x=Math.max(5,Math.min(95,pos.x+dx));pos.y=Math.max(5,Math.min(95,pos.y+dy));updateWorld()}
 $$("[data-move]").forEach(b=>b.onclick=()=>{let d=b.dataset.move;move(d==="left"?-4:d==="right"?4:0,d==="up"?-4:d==="down"?4:0)});
 document.addEventListener("keydown",e=>{
- if(!$("#explore").classList.contains("active"))return;
- const k=e.key.toLowerCase();
- if(["arrowup","w"].includes(k))move(0,-4);
- if(["arrowdown","s"].includes(k))move(0,4);
- if(["arrowleft","a"].includes(k))move(-4,0);
- if(["arrowright","d"].includes(k))move(4,0);
- if(k==="enter"&&currentPlace)openPlace(currentPlace);
+ if(!$("#world").classList.contains("active"))return;
+ let k=e.key.toLowerCase();
+ if(k==="w"||k==="arrowup")move(0,-4); if(k==="s"||k==="arrowdown")move(0,4);
+ if(k==="a"||k==="arrowleft")move(-4,0); if(k==="d"||k==="arrowright")move(4,0);
 });
-$("#inspect").onclick=()=>{if(currentPlace)openPlace(currentPlace)};
-function openPlace(id){
- const p=places[id];$("#placeQuizTitle").textContent=p.name+" クイズ";locked=false;
- $("#placeQuizBox").innerHTML=`<div class="quiz-card"><span class="tag">発見イベント</span><h3>${p.q.q}</h3><div class="answers">${p.q.a.map((x,i)=>`<button class="answer" data-i="${i}">${x}</button>`).join("")}</div><div id="explain"></div></div>`;
- $$(".answer").forEach(b=>b.onclick=()=>answerPlace(id,+b.dataset.i));
- page("placeQuiz");
+$("#talk").onclick=()=>{if(nearNpc)talk(nearNpc)};
+$("#inspect").onclick=()=>{if(nearSpot)inspectSpot(nearSpot)};
+function talk(id){
+ let n=NPCS[id];
+ if(!S.met.includes(id)){S.met.push(id);S.xp+=10;save();toast("新しい出会い！ +10 XP")}
+ $("#dialogBox").innerHTML=`<div class="dialog"><div class="portrait">${n.emoji}</div><h2>${n.name}</h2><p>${n.lines[0]}</p><p>${n.lines[1]}</p><button class="primary" id="npcQuiz">🎴 クイズに挑戦</button><button class="secondary" data-page="world">街へ戻る</button></div>`;
+ $("#npcQuiz").onclick=()=>openEvent(SPOTS[n.spot],n.name);
+ $("#dialogBox [data-page]").onclick=()=>show("world"); show("dialog");
 }
-function answerPlace(id,i){
- if(locked)return;locked=true;const q=places[id].q,bs=$$(".answer");
- bs[q.ok].classList.add("correct");
- if(i===q.ok){
-   if(!S.discoveries.includes(id)){S.discoveries.push(id);S.xp+=30;S.coins+=15;toast("発見！ +30 XP +15札")}
-   else toast("正解！")
- }else{bs[i].classList.add("wrong");toast("街に戻ってもう一度調べよう")}
- $("#explain").innerHTML=`<div class="explain"><b>街の記録</b><br>${q.e}<br><button class="primary" style="margin-top:10px" onclick="page('explore')">街へ戻る</button></div>`;
- save();
+function inspectSpot(id){
+ if(!S.found.includes(id)){S.found.push(id);S.xp+=15;save();toast("場所を発見！ +15 XP")}
+ openEvent(SPOTS[id],SPOTS[id].name);
 }
-function quiz(){
- const q=QUIZ[S.q%QUIZ.length];locked=false;
- $("#quizBox").innerHTML=`<div class="quiz-card"><span class="tag">${q.cat}</span><h3>${q.q}</h3><div class="answers">${q.a.map((x,i)=>`<button class="answer" data-i="${i}">${x}</button>`).join("")}</div><div id="explain"></div></div>`;
- $$(".answer").forEach(b=>b.onclick=()=>answer(i=+b.dataset.i,q));
+function openEvent(q,title){
+ eventData=q;answered=false;$("#eventTitle").textContent=title;
+ $("#eventBox").innerHTML=`<div class="quiz"><span class="tag">発見クイズ</span><h3>${q.q}</h3><div class="answers">${q.answers.map((a,i)=>`<button data-answer="${i}">${a}</button>`).join("")}</div><div id="explain"></div></div>`;
+ $$("#eventBox [data-answer]").forEach(b=>b.onclick=()=>check(+b.dataset.answer));
+ show("event");
 }
-function answer(i,q){if(locked)return;locked=true;let bs=$$("#quiz .answer");bs[q.ok].classList.add("correct");if(i===q.ok){S.xp+=20;S.coins+=10;toast("正解！ +20 XP +10札")}else{bs[i].classList.add("wrong");toast("解説を確認しよう")}$("#explain").innerHTML=`<div class="explain"><b>解説</b><br>${q.e}<br><button class="primary" style="margin-top:10px" onclick="S.q++;save();quiz()">次の問題</button></div>`;save()}
-function encyclopedia(){$("#encyclopediaBox").innerHTML=FLOATS.map(f=>`<article class="entry"><div class="float-entry"><div class="big">${f.icon}</div><div><span class="tag">${f.category}</span><h3>${f.name}</h3></div></div><p>${f.text}</p></article>`).join("")}
-function history(){$("#historyBox").innerHTML=HISTORY.map(h=>`<article class="entry"><span class="tag">${h.year}</span><h3>${h.title}</h3><p>${h.text}</p></article>`).join("")}
-$("#gear").onclick=()=>$("#modal").classList.remove("hidden");$("#close").onclick=()=>$("#modal").classList.add("hidden");$("#reset").onclick=()=>{localStorage.removeItem("kmq4");location.reload()}
-stats();page("home");
+function check(i){
+ if(answered)return;answered=true;let bs=$$("#eventBox [data-answer]");
+ bs[eventData.ok].classList.add("correct");
+ if(i===eventData.ok){S.xp+=30;S.coins+=15;toast("正解！ +30 XP / +15札")}
+ else{bs[i].classList.add("wrong");toast("解説を読んで覚えよう")}
+ $("#explain").innerHTML=`<div class="explain"><b>解説</b><p>${eventData.ex}</p><button class="primary" data-page="world">街へ戻る</button></div>`;
+ $("#explain [data-page]").onclick=()=>show("world");save();
+}
+function renderQuests(){
+ let q=[["🏮 六軒町を発見","rokken"],["🥁 今福囃子を発見","imafuku"],["⛩️ 氷川神社を発見","shrine"]];
+ $("#questBox").innerHTML=q.map(x=>`<article><h3>${x[0]}</h3><b>${S.found.includes(x[1])?"✅ 達成":"⬜ 未達成"}</b></article>`).join("")+
+ `<article><h3>👥 街の3人と話す</h3><b>${S.met.length} / 3</b></article><article><h3>⭐ 全5か所を探索</h3><b>${S.found.length} / 5</b></article>`;
+}
+function renderBook(){
+ let ids=["rokken","imafuku","plaza","shrine","shop"];
+ $("#bookBox").innerHTML=ids.map(id=>{let q=SPOTS[id],open=S.found.includes(id);return `<article><h3>${open?"📖":"🔒"} ${open?q.name:"？？？"}</h3><p>${open?q.ex:"街を探索すると情報が解放されます。"}</p></article>`}).join("");
+}
+function renderHistory(){$("#historyBox").innerHTML=HISTORY.map(h=>`<article><span class="tag">${h[0]}</span><h3>${h[1]}</h3><p>${h[2]}</p></article>`).join("")}
+function renderFreeQuiz(){let arr=Object.values(SPOTS),q=arr[S.q%arr.length];eventData=q;$("#freeQuizBox").innerHTML=`<div class="quiz"><h3>${q.q}</h3><div class="answers">${q.answers.map((a,i)=>`<button data-fq="${i}">${a}</button>`).join("")}</div><div id="fqex"></div></div>`;$$("[data-fq]").forEach(b=>b.onclick=()=>{let i=+b.dataset.fq;if(i===q.ok){S.xp+=20;S.coins+=10;toast("正解！ +20 XP")}else toast("惜しい！");S.q++;save();setTimeout(renderFreeQuiz,700)})}
+$("#settings").onclick=()=>$("#modal").classList.remove("hidden");$("#close").onclick=()=>$("#modal").classList.add("hidden");
+$("#reset").onclick=()=>{localStorage.removeItem(KEY);location.reload()};
+renderStats();
